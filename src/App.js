@@ -2,7 +2,11 @@ import TextPressure from "./TextPressure";
 
 export default function App() {
   return (
-    <div className="h-screen w-screen bg-transparent flex items-center justify-center">
+    <div
+  className="h-screen w-screen bg-transparent flex items-center justify-center"
+  style={{ backgroundColor: "transparent" }}
+>
+
       <TextPressure
         text="Sascha Rapp"
         stroke={false}
