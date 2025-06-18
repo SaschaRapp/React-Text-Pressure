@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body {
+
+html, body, #root {
   background-color: transparent !important;
 }
