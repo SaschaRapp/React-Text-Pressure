@@ -4,7 +4,7 @@ export default function App() {
   return (
     <div className="h-screen w-screen bg-transparent flex items-center justify-center">
       <TextPressure
-        text={`Sascha\nRapp`}
+       text={["Sascha", "Rapp"].join("\n")}
         stroke={false}
         strokeColor="#FF0000"
         textColor="#FFE700"
