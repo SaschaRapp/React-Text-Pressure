@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 const TextPressure = ({
   text = "Compressa",
   fontFamily = "Compressa VF",
-  // This font is just an example, you should not use it in commercial projects.
   fontUrl = "https://res.cloudinary.com/dr6lvwubh/raw/upload/v1529908256/CompressaPRO-GX.woff2",
 
   width = true,
@@ -33,7 +32,8 @@ const TextPressure = ({
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
 
-  const chars = text.split("\n");
+  // Split on newlines to support multiline rendering
+  const lines = text.split("\n");
 
   const dist = (a, b) => {
     const dx = b.x - a.x;
@@ -56,8 +56,7 @@ const TextPressure = ({
     window.addEventListener("touchmove", handleTouchMove, { passive: false });
 
     if (containerRef.current) {
-      const { left, top, width, height } =
-        containerRef.current.getBoundingClientRect();
+      const { left, top, width, height } = containerRef.current.getBoundingClientRect();
       mouseRef.current.x = left + width / 2;
       mouseRef.current.y = top + height / 2;
       cursorRef.current.x = mouseRef.current.x;
@@ -73,10 +72,10 @@ const TextPressure = ({
   const setSize = () => {
     if (!containerRef.current || !titleRef.current) return;
 
-    const { width: containerW, height: containerH } =
-      containerRef.current.getBoundingClientRect();
+    const { width: containerW, height: containerH } = containerRef.current.getBoundingClientRect();
+    const totalChars = lines.reduce((acc, line) => acc + line.length, 0);
 
-    let newFontSize = containerW / (chars.length / 2);
+    let newFontSize = containerW / (totalChars / 2);
     newFontSize = Math.max(newFontSize, minFontSize);
 
     setFontSize(newFontSize);
@@ -86,7 +85,6 @@ const TextPressure = ({
     requestAnimationFrame(() => {
       if (!titleRef.current) return;
       const textRect = titleRef.current.getBoundingClientRect();
-
       if (scale && textRect.height > 0) {
         const yRatio = containerH / textRect.height;
         setScaleY(yRatio);
@@ -99,7 +97,6 @@ const TextPressure = ({
     setSize();
     window.addEventListener("resize", setSize);
     return () => window.removeEventListener("resize", setSize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scale, text]);
 
   useEffect(() => {
@@ -143,7 +140,7 @@ const TextPressure = ({
 
     animate();
     return () => cancelAnimationFrame(rafId);
-  }, [width, weight, italic, alpha, chars.length]);
+  }, [width, weight, italic, alpha, lines.length]);
 
   return (
     <div
@@ -173,32 +170,13 @@ const TextPressure = ({
       `}</style>
 
       <h1
-
-        {lines.map((line, lineIdx) => (
-  <div key={lineIdx} className="whitespace-nowrap">
-    {line.split("").map((char, i) => {
-      const index = lineIdx * 100 + i; // Unique index across lines
-      return (
-        <span
-          key={index}
-          ref={(el) => (spansRef.current[index] = el)}
-          data-char={char}
-          className="inline-block"
-        >
-          {char}
-        </span>
-      );
-    })}
-  </div>
-))}
-
         ref={titleRef}
         className={`text-pressure-title ${className} ${
-          flex ? "flex justify-between" : ""
+          flex ? "flex flex-col items-center gap-2" : ""
         } ${stroke ? "stroke" : ""} uppercase text-center`}
         style={{
           fontFamily,
-          fontSize: fontSize,
+          fontSize,
           lineHeight,
           transform: `scale(1, ${scaleY})`,
           transformOrigin: "center top",
@@ -207,15 +185,22 @@ const TextPressure = ({
           color: stroke ? undefined : textColor,
         }}
       >
-        {chars.map((char, i) => (
-          <span
-            key={i}
-            ref={(el) => (spansRef.current[i] = el)}
-            data-char={char}
-            className="inline-block"
-          >
-            {char}
-          </span>
+        {lines.map((line, lineIdx) => (
+          <div key={lineIdx} className="whitespace-nowrap">
+            {line.split("").map((char, i) => {
+              const index = lineIdx * 100 + i;
+              return (
+                <span
+                  key={index}
+                  ref={(el) => (spansRef.current[index] = el)}
+                  data-char={char}
+                  className="inline-block"
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </div>
         ))}
       </h1>
     </div>
