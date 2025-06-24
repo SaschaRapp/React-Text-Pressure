@@ -33,7 +33,7 @@ const TextPressure = ({
   const [scaleY, setScaleY] = useState(1);
   const [lineHeight, setLineHeight] = useState(1);
 
-  const chars = text.split("");
+  const chars = text.split("\n");
 
   const dist = (a, b) => {
     const dx = b.x - a.x;
@@ -173,6 +173,25 @@ const TextPressure = ({
       `}</style>
 
       <h1
+
+        {lines.map((line, lineIdx) => (
+  <div key={lineIdx} className="whitespace-nowrap">
+    {line.split("").map((char, i) => {
+      const index = lineIdx * 100 + i; // Unique index across lines
+      return (
+        <span
+          key={index}
+          ref={(el) => (spansRef.current[index] = el)}
+          data-char={char}
+          className="inline-block"
+        >
+          {char}
+        </span>
+      );
+    })}
+  </div>
+))}
+
         ref={titleRef}
         className={`text-pressure-title ${className} ${
           flex ? "flex justify-between" : ""
