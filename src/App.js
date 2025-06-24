@@ -8,7 +8,7 @@ export default function App() {
 >
 
       <TextPressure
-        text="Sascha Rapp"
+        text="Sascha   Rapp"
         stroke={false}
         strokeColor="#FF0000"
         textColor="#FFE700"
